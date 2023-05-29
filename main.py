@@ -39,6 +39,9 @@ async def connect_to_database():
         connection.close()
 
 
+@app.route('/',methods=['GET'])
+def ufa():
+    print("HELLO WOLRD")
     
 @app.route('/empleados', methods=['GET'])
 async def get_empleados():
