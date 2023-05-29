@@ -39,9 +39,10 @@ async def connect_to_database():
         connection.close()
 
 
-@app.route('/',methods=['GET'])
+@app.route('/',methods=['GET']) 
 def ufa():
-    return print("HELLO WOLRD")
+    resultados = [{"estado":"todo bien uwuw"}]
+    return jsonify(resultados) 
     
 @app.route('/empleados', methods=['GET'])
 async def get_empleados():
