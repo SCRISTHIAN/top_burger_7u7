@@ -81,9 +81,8 @@ async def get_proveedores():
 
 
 
-if __name__ == '__main__':
-    async def main():
-        app.run(debug=True)
+async def main():
+    app.run(debug=True)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(main())
