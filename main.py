@@ -1,5 +1,6 @@
 import asyncio
-from flask import Flask, jsonify, request
+import json
+from flask import Flask, Response, jsonify, request
 import pymysql
 import aiomysql
 from contextlib import asynccontextmanager
@@ -39,10 +40,6 @@ async def connect_to_database():
         connection.close()
 
 
-@app.route('/',methods=['GET']) 
-def ufa():
-    resultados = [{"estado":"todo bien uwuw"}]
-    return jsonify(resultados) 
     
 @app.route('/empleados', methods=['GET'])
 async def get_empleados():
@@ -83,10 +80,5 @@ async def get_proveedores():
             connection.close()
     
 
-
-
-async def main():
+if __name__ == '__main__':
     app.run(debug=True)
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
