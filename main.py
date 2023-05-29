@@ -41,7 +41,7 @@ async def connect_to_database():
 
 @app.route('/',methods=['GET'])
 def ufa():
-    print("HELLO WOLRD")
+    return print("HELLO WOLRD")
     
 @app.route('/empleados', methods=['GET'])
 async def get_empleados():
