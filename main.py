@@ -91,5 +91,20 @@ async def get_platos():
         finally:
             connection.close()
 
+@app.route('/ingredientes',methods=['GET'])
+async def get_platos():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql="SELECT ID_Ingrediente, Nombre, Stock, Unidad_Medida FROM Ingrediente;"
+                await cursor.execute(sql)
+                ingredientes=await cursor.fetchall()
+                res=[{"id_ingrediente":ingredientes["ID_Ingrediente"],"nombre":ingredientes["Nombre"],"stock":ingredientes["Stock"],"unidad_medida":ingredientes["Unidad_Medida"]} for ingrediente in ingredientes]
+                return jsonify(res)
+        except pymysql.Error as e:
+            return jsonify({"error": "Database error: {}".format(e)}), 500
+        finally:
+            connection.close()
+
 if __name__ == '__main__':
     app.run(debug=True)
