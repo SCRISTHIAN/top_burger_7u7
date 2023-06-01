@@ -92,7 +92,7 @@ async def get_platos():
             connection.close()
 
 @app.route('/ingredientes',methods=['GET'])
-async def get_platos():
+async def get_ingredientes():
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
@@ -107,7 +107,7 @@ async def get_platos():
             connection.close()
 
 @app.route('/ingredientes', methods=['POST'])
-async def crear_ingrediente():
+async def crear_ingredientes():
     try:
         data = await request.get_json()
         nombre = data['nombre']
