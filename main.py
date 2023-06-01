@@ -106,14 +106,34 @@ async def get_ingredientes():
         finally:
             connection.close()
 
+# @app.route('/ingredientes', methods=['POST'])
+# async def crear_ingredientes():
+#     try:
+#         data = await request.get_json()
+#         nombre = data['nombre']
+#         stock = data['stock']
+#         unidad_medida = data['unidad_medida']
+        
+#         async with connect_to_database() as connection:
+#             async with connection.cursor() as cursor:
+#                 sql = "INSERT INTO Ingrediente (Nombre, Stock, Unidad_Medida) VALUES (%s, %s, %s)"
+#                 await cursor.execute(sql, (nombre, stock, unidad_medida))
+#                 await connection.commit()
+#                 id_ingrediente = cursor.lastrowid
+#                 return jsonify({"id_ingrediente": id_ingrediente, "mensaje": "Ingrediente creado exitosamente"})
+    
+#     except pymysql.Error as e:
+#         return jsonify({"error": "Database error: {}".format(e)}), 500
+
+
 @app.route('/ingredientes', methods=['POST'])
-async def crear_ingredientes():
+async def create_ingrediente():
     try:
         data = await request.get_json()
-        nombre = data['nombre']
-        stock = data['stock']
-        unidad_medida = data['unidad_medida']
-        
+        nombre = data.get('nombre')
+        stock = data.get('stock')
+        unidad_medida = data.get('unidad_medida')
+
         async with connect_to_database() as connection:
             async with connection.cursor() as cursor:
                 sql = "INSERT INTO Ingrediente (Nombre, Stock, Unidad_Medida) VALUES (%s, %s, %s)"
@@ -122,9 +142,9 @@ async def crear_ingredientes():
                 id_ingrediente = cursor.lastrowid
                 return jsonify({"id_ingrediente": id_ingrediente, "mensaje": "Ingrediente creado exitosamente"})
     
-    except pymysql.Error as e:
-        return jsonify({"error": "Database error: {}".format(e)}), 500
-    
+    except Exception as e:
+        return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
