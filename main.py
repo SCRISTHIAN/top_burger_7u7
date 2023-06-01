@@ -109,7 +109,6 @@ async def get_platos():
 @app.route('/ingredientes', methods=['POST'])
 async def crear_ingrediente():
     try:
-        # Obtener los datos del nuevo ingrediente desde la solicitud POST
         data = await request.get_json()
         nombre = data['nombre']
         stock = data['stock']
