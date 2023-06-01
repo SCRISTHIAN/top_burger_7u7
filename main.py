@@ -145,6 +145,66 @@ async def create_ingrediente():
     except Exception as e:
         return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
 
+@app.route('/platos', methods=['POST'])
+async def create_plato():
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre')
+        precio = data.get('precio')
+        tiempo_preparacion = data.get('tiempo_preparacion')
+        url_imagen = data.get('url_imagen')
+
+        async with connect_to_database() as connection:
+            async with connection.cursor() as cursor:
+                sql = "INSERT INTO Plato (Nombre, Precio, Tiempo_Preparacion, Imagen_URL) VALUES (%s, %s, %s, %s)"
+                await cursor.execute(sql, (nombre, precio, tiempo_preparacion, url_imagen))
+                await connection.commit()
+                id_plato = cursor.lastrowid
+                return jsonify({"id_plato": id_plato, "mensaje": "Plato creado exitosamente"})
+
+    except Exception as e:
+        return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
+
+@app.route('/empleados', methods=['POST'])
+async def create_empleado():
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre')
+        usuario = data.get('usuario')
+        contrasena = data.get('contrasena')
+        rol = data.get('rol')
+
+        async with connect_to_database() as connection:
+            async with connection.cursor() as cursor:
+                sql = "INSERT INTO Empleado (Nombre, Usuario, Contrasena, Rol) VALUES (%s, %s, %s, %s)"
+                await cursor.execute(sql, (nombre, usuario, contrasena, rol))
+                await connection.commit()
+                id_empleado = cursor.lastrowid
+                return jsonify({"id_empleado": id_empleado, "mensaje": "Empleado creado exitosamente"})
+
+    except Exception as e:
+        return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
+
+
+@app.route('/proveedores', methods=['POST'])
+async def create_proveedor():
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre')
+        telefono = data.get('telefono')
+        direccion = data.get('direccion')
+
+        async with connect_to_database() as connection:
+            async with connection.cursor() as cursor:
+                sql = "INSERT INTO Proveedor (Nombre, Telefono, Direccion) VALUES (%s, %s, %s)"
+                await cursor.execute(sql, (nombre, telefono, direccion))
+                await connection.commit()
+                id_proveedor = cursor.lastrowid
+                return jsonify({"id_proveedor": id_proveedor, "mensaje": "Proveedor creado exitosamente"})
+
+    except Exception as e:
+        return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True)
