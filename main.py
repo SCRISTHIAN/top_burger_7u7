@@ -129,7 +129,7 @@ async def get_ingredientes():
 @app.route('/ingredientes', methods=['POST'])
 async def create_ingrediente():
     try:
-        data = await request.get_json()
+        data =  request.get_json()
         nombre = data.get('nombre')
         stock = data.get('stock')
         unidad_medida = data.get('unidad_medida')
