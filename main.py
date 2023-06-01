@@ -84,7 +84,7 @@ async def get_platos():
                 sql="SELECT ID_Plato, Nombre, Precio, Tiempo_Preparacion, Imagen_URL FROM Plato;"
                 await cursor.execute(sql)
                 platos=await cursor.fetchall()
-                res=[{"id_plato":platos["ID_Plato"],"nombre":platos["Nombre"],"precio":platos["Precio"],"tiempo_preparacion":platos["Tiempo_Preparacion"],"url_image":platos["Imagen_URL"]}]
+                res=[{"id_plato":platos["ID_Plato"],"nombre":platos["Nombre"],"precio":platos["Precio"],"tiempo_preparacion":platos["Tiempo_Preparacion"],"url_image":platos["Imagen_URL"]} for plato in platos]
                 return jsonify(res)
         except pymysql.Error as e:
             return jsonify({"error": "Database error: {}".format(e)}), 500
