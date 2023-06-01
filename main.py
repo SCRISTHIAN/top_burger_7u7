@@ -91,20 +91,7 @@ async def get_platos():
         finally:
             connection.close()
 
-@app.route('/ingredientes',methods=['GET'])
-async def get_ingredientes():
-    async with connect_to_database() as connection:
-        try:
-            async with connection.cursor() as cursor:
-                sql="SELECT ID_Ingrediente, Nombre, Stock, Unidad_Medida FROM Ingrediente;"
-                await cursor.execute(sql)
-                ingredientes=await cursor.fetchall()
-                res=[{"id_ingrediente":ingredientes["ID_Ingrediente"],"nombre":ingredientes["Nombre"],"stock":ingredientes["Stock"],"unidad_medida":ingredientes["Unidad_Medida"]} for ingrediente in ingredientes]
-                return jsonify(res)
-        except pymysql.Error as e:
-            return jsonify({"error": "Database error: {}".format(e)}), 500
-        finally:
-            connection.close()
+
 
 # @app.route('/ingredientes', methods=['POST'])
 # async def crear_ingredientes():
@@ -201,6 +188,67 @@ async def create_proveedor():
                 await connection.commit()
                 id_proveedor = cursor.lastrowid
                 return jsonify({"id_proveedor": id_proveedor, "mensaje": "Proveedor creado exitosamente"})
+
+    except Exception as e:
+        return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
+    
+@app.route('/ingredientes',methods=['GET'])
+async def get_ingredientes():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql="SELECT ID_Ingrediente, Nombre, Stock, Unidad_Medida FROM Ingrediente;"
+                await cursor.execute(sql)
+                ingredientes=await cursor.fetchall()
+                res=[{"id_ingrediente":ingredientes["ID_Ingrediente"],"nombre":ingredientes["Nombre"],"stock":ingredientes["Stock"],"unidad_medida":ingredientes["Unidad_Medida"]} for ingrediente in ingredientes]
+                return jsonify(res)
+        except pymysql.Error as e:
+            return jsonify({"error": "Database error: {}".format(e)}), 500
+        finally:
+            connection.close()
+
+@app.route('/clientes', methods=['GET'])
+async def get_clientes():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT ID_Cliente, Nombre, Telefono, Direccion FROM Cliente;"
+                await cursor.execute(sql)
+                clientes = await cursor.fetchall()
+
+                resultados = []
+                for cliente in clientes:
+                    resultado = {
+                        "id_cliente": cliente['ID_Cliente'],
+                        "nombre": cliente['Nombre'],
+                        "telefono": cliente['Telefono'],
+                        "direccion": cliente['Direccion']
+                    }
+                    resultados.append(resultado)
+
+                return jsonify(resultados)
+
+        except pymysql.Error as e:
+            return jsonify({"error": "Database error: {}".format(e)}), 500
+
+        finally:
+            connection.close()
+            
+@app.route('/clientes', methods=['POST'])
+async def create_cliente():
+    try:
+        data = request.get_json()
+        nombre = data.get('nombre')
+        telefono = data.get('telefono')
+        direccion = data.get('direccion')
+
+        async with connect_to_database() as connection:
+            async with connection.cursor() as cursor:
+                sql = "INSERT INTO Cliente (Nombre, Telefono, Direccion) VALUES (%s, %s, %s)"
+                await cursor.execute(sql, (nombre, telefono, direccion))
+                await connection.commit()
+                id_cliente = cursor.lastrowid
+                return jsonify({"id_cliente": id_cliente, "mensaje": "Cliente creado exitosamente"})
 
     except Exception as e:
         return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
