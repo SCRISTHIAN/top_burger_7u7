@@ -76,18 +76,18 @@ async def get_proveedores():
         finally:
             connection.close()
     
-@app.route('/Platos',methods=['GET'])
+@app.route('/platos',methods=['GET'])
 async def get_platos():
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
-                sql='SELECT ID_Plato, Nombre, Precio, Tiempo_Preparacion, Imagen_URL FROM Plato;'
+                sql="SELECT ID_Plato, Nombre, Precio, Tiempo_Preparacion, Imagen_URL FROM Plato;"
                 await cursor.execute(sql)
                 platos=await cursor.fetchall()
-                res=[{'id_plato':platos['ID_Plato'],'nombre':platos['Nombre'],'precio':platos['Precio'],'tiempo_preparacion':platos['Tiempo_Preparacion'],'url_image':platos['Imagen_URL']}]
+                res=[{"id_plato":platos["ID_Plato"],"nombre":platos["Nombre"],"precio":platos["Precio"],"tiempo_preparacion":platos["Tiempo_Preparacion"],"url_image":platos["Imagen_URL"]}]
                 return jsonify(res)
         except pymysql.Error as e:
-            return jsonify({'error':'Database error: {}'.format(e)}),500
+            return jsonify({"error": "Database error: {}".format(e)}), 500
         finally:
             connection.close()
 
