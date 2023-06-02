@@ -1,27 +1,18 @@
 import asyncio
 import json
 from flask import Flask, Response, jsonify, request
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from werkzeug.security import check_password_hash, generate_password_hash
 import pymysql
 import aiomysql
 from contextlib import asynccontextmanager
 
 app = Flask(__name__)
-# jwt = JWTManager(app)
+jwt = JWTManager(app)
 # app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
 
-# @app.route('/create_empleado', methods=['POST'])
-# #@jwt_required()
-# async def create_empleado():
-#     #identity = get_jwt_identity()
-#     #if identity['role'] != 'admin':
-#     #   return jsonify({"error": "Unauthorized"}), 403
-#     data = request.get_json()
-#     result = await create_user(data)
-    
-#     if "error" in result:
-#         return jsonify({"error": result["error"]}), 500
-#     else:
-#         return jsonify({"message": result["message"]}), 200
+
+
 @asynccontextmanager
 async def connect_to_database():
     connection = await aiomysql.connect(
@@ -37,6 +28,59 @@ async def connect_to_database():
         print("Conexión establecida")
     finally:
         connection.close()
+
+@app.route('/create_empleado', methods=['POST'])
+@jwt_required()
+async def create_empleado():
+    #identity = get_jwt_identity()
+    #if identity['role'] != 'admin':
+    #   return jsonify({"error": "Unauthorized"}), 403
+    data = request.get_json()
+    name = data.get('name')
+    user = data.get('user')
+    password = data.get('password')
+    role = data.get('role')
+    hashed_password = generate_password_hash(password)
+    
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "INSERT INTO Empleado (Nombre, Usuario, Contrasena, Rol) VALUES (%s, %s, %s, %s)"
+                await cursor.execute(sql, (name ,user, hashed_password, role))
+                connection.commit()
+
+                return jsonify({"message": "User created successfully"}), 200
+          
+        except pymysql.Error as e:
+            return jsonify({"error":"Create Empleado Failed! :{}".format(e)}),500
+        finally:
+            connection.close()
+
+
+@app.route('/login', methods=['POST'])
+async def login():
+    data = request.get_json()
+    user = data.get('user')
+    password = data.get('password')
+
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT Usuario, Contrasena, Rol FROM Empleado WHERE Usuario = %s"
+                await cursor.execute(sql, (user,))
+                empleado = await cursor.fetchone()
+
+                if not empleado or not check_password_hash(empleado['Contrasena'], password):
+                    return jsonify({"error": "Invalid user or password"}), 401
+                
+
+                access_token = create_access_token(identity={"user": user, "role": empleado["Rol"]})
+                return jsonify(access_token=access_token), 200           
+        except pymysql.Error as e:
+            return jsonify({"error":"Login failed! :{}".format(e)}),500
+        finally:
+            connection.close()
+
 
 @app.route('/empleados', methods=['GET'])
 async def get_empleados():
