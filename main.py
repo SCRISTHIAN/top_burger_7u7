@@ -29,33 +29,6 @@ async def connect_to_database():
     finally:
         connection.close()
 
-@app.route('/create_empleado', methods=['POST'])
-@jwt_required()
-async def create_empleado():
-    #identity = get_jwt_identity()
-    #if identity['role'] != 'admin':
-    #   return jsonify({"error": "Unauthorized"}), 403
-    data = request.get_json()
-    name = data.get('name')
-    user = data.get('user')
-    password = data.get('password')
-    role = data.get('role')
-    hashed_password = generate_password_hash(password)
-    
-    async with connect_to_database() as connection:
-        try:
-            async with connection.cursor() as cursor:
-                sql = "INSERT INTO Empleado (Nombre, Usuario, Contrasena, Rol) VALUES (%s, %s, %s, %s)"
-                await cursor.execute(sql, (name ,user, hashed_password, role))
-                connection.commit()
-
-                return jsonify({"message": "User created successfully"}), 200
-          
-        except pymysql.Error as e:
-            return jsonify({"error":"Create Empleado Failed! :{}".format(e)}),500
-        finally:
-            connection.close()
-
 
 @app.route('/login', methods=['POST'])
 async def login():
@@ -197,24 +170,31 @@ async def create_plato():
         return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
 
 @app.route('/empleados', methods=['POST'])
+@jwt_required()
 async def create_empleado():
-    try:
-        data = request.get_json()
-        nombre = data.get('nombre')
-        usuario = data.get('usuario')
-        contrasena = data.get('contrasena')
-        rol = data.get('rol')
+    #identity = get_jwt_identity()
+    #if identity['role'] != 'admin':
+    #   return jsonify({"error": "Unauthorized"}), 403
+    data = request.get_json()
+    name = data.get('name')
+    user = data.get('user')
+    password = data.get('password')
+    role = data.get('role')
+    hashed_password = generate_password_hash(password)
 
-        async with connect_to_database() as connection:
+    async with connect_to_database() as connection:
+        try:
             async with connection.cursor() as cursor:
                 sql = "INSERT INTO Empleado (Nombre, Usuario, Contrasena, Rol) VALUES (%s, %s, %s, %s)"
-                await cursor.execute(sql, (nombre, usuario, contrasena, rol))
+                await cursor.execute(sql, (name ,user, hashed_password, role))
                 await connection.commit()
-                id_empleado = cursor.lastrowid
-                return jsonify({"id_empleado": id_empleado, "mensaje": "Empleado creado exitosamente"})
 
-    except Exception as e:
-        return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
+                return jsonify({"message": "User created successfully"}), 200
+          
+        except pymysql.Error as e:
+            return jsonify({"error":"Create Empleado Failed! :{}".format(e)}),500
+        finally:
+            connection.close()
 
 
 @app.route('/proveedores', methods=['POST'])
