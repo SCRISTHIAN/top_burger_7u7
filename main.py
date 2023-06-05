@@ -233,7 +233,7 @@ async def get_clientes():
 
         finally:
             connection.close()
-            
+
 @app.route('/clientes', methods=['POST'])
 async def create_cliente():
     try:
