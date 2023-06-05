@@ -11,7 +11,7 @@ from contextlib import asynccontextmanager
 app = Flask(__name__)
 jwt = JWTManager(app)
 # app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
-
+#ufa
 
 
 @asynccontextmanager
@@ -43,9 +43,9 @@ async def login():
                 sql = "SELECT Usuario, Contrasena, Rol FROM Empleado WHERE Usuario = %s"
                 await cursor.execute(sql, (user,))
                 empleado = await cursor.fetchone()
-
-                if not empleado or not check_password_hash(empleado['Contrasena'], password):
-                    return jsonify({"error": "Invalid user or password"}), 401
+                print(empleado)
+                # if not empleado or not check_password_hash(empleado['Contrasena'], password):
+                #     return jsonify({"error": "Invalid user or password"}), 401
                 
 
                 access_token = create_access_token(identity={"user": user, "role": empleado["Rol"]})
@@ -258,7 +258,7 @@ async def get_clientes():
 
         finally:
             connection.close()
-            
+
 @app.route('/clientes', methods=['POST'])
 async def create_cliente():
     try:
