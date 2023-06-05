@@ -1,5 +1,6 @@
 import asyncio
 import json
+from sys import exception
 from flask import Flask, Response, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -277,6 +278,22 @@ async def create_cliente():
     except Exception as e:
         return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
 
+
+
+@app.route('/menudeldia', methods=['GET'])
+async def get_menu():
+    async with connect_to_database() as connection:
+        try: 
+            async with connection.cursor() as cursor:
+                sql= "SELECT * FROM MENU_DEL_DIA_PLATO_V"
+                await cursor.execute(sql)
+                platos = await cursor.fetchall()
+                return jsonify(platos)
+        except pymysql.Error as e:
+            return jsonify({"error":"Database error:{}".format(str(e))}), 500
+
+        finally:
+            connection.close()
 
 if __name__ == '__main__':
     app.run(debug=True)
