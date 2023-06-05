@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 app = Flask(__name__)
 jwt = JWTManager(app)
 # app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
-
+#ufa
 
 
 @asynccontextmanager
