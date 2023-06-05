@@ -39,7 +39,7 @@ async def login():
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
-                sql = "SELECT usuario, Contrasena, Rol FROM Empleado WHERE usuario = %s"
+                sql = "SELECT Usuario, Contrasena, Rol FROM Empleado WHERE Usuario = %s"
                 await cursor.execute(sql, (user,))
                 empleado = await cursor.fetchone()
                 print(empleado)
