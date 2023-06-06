@@ -9,8 +9,8 @@ import aiomysql
 from contextlib import asynccontextmanager
 
 app = Flask(__name__)
-CORS(app, resources={r"/": {"origins": ""}})
 jwt = JWTManager(app)
+CORS(app, resources={r"/": {"origins": ""}})
 # app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
 #ufa
 
