@@ -10,6 +10,8 @@ from contextlib import asynccontextmanager
 app = Flask(__name__)
 jwt = JWTManager(app)
 CORS(app, resources={r"/": {"origins": ""}})
+# app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
+#ufa
 
 
 @asynccontextmanager
@@ -171,9 +173,9 @@ async def create_plato():
 @app.route('/empleados', methods=['POST'])
 @jwt_required()
 async def create_empleado():
-    #identity = get_jwt_identity()
-    #if identity['role'] != 'admin':
-    #   return jsonify({"error": "Unauthorized"}), 403
+    identity = get_jwt_identity()
+    if identity['role'] != 'admin':
+       return jsonify({"error": "Unauthorized"}), 403
     data = request.get_json()
     name = data.get('name')
     user = data.get('user')
