@@ -1,15 +1,21 @@
+<<<<<<< HEAD
 import asyncio
 import json
 from sys import exception
+=======
+
+>>>>>>> 182d8636b922db51f1bf07482c4bcbbc6360a293
 from flask import Flask, Response, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
+from flask_cors import CORS
 import pymysql
 import aiomysql
 from contextlib import asynccontextmanager
 
 app = Flask(__name__)
 jwt = JWTManager(app)
+CORS(app, resources={r"/": {"origins": ""}})
 # app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
 #ufa
 
@@ -44,8 +50,8 @@ async def login():
                 await cursor.execute(sql, (user,))
                 empleado = await cursor.fetchone()
                 print(empleado)
-                # if not empleado or not check_password_hash(empleado['Contrasena'], password):
-                #     return jsonify({"error": "Invalid user or password"}), 401
+                if not empleado or not check_password_hash(empleado['Contrasena'], password):
+                    return jsonify({"error": "Invalid user or password"}), 401
                 
 
                 access_token = create_access_token(identity={"user": user, "role": empleado["Rol"]})
@@ -173,9 +179,9 @@ async def create_plato():
 @app.route('/empleados', methods=['POST'])
 @jwt_required()
 async def create_empleado():
-    #identity = get_jwt_identity()
-    #if identity['role'] != 'admin':
-    #   return jsonify({"error": "Unauthorized"}), 403
+    identity = get_jwt_identity()
+    if identity['role'] != 'admin':
+       return jsonify({"error": "Unauthorized"}), 403
     data = request.get_json()
     name = data.get('name')
     user = data.get('user')
