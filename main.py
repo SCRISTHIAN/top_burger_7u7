@@ -44,8 +44,8 @@ async def login():
                 await cursor.execute(sql, (user,))
                 empleado = await cursor.fetchone()
                 print(empleado)
-                # if not empleado or not check_password_hash(empleado['Contrasena'], password):
-                #     return jsonify({"error": "Invalid user or password"}), 401
+                if not empleado or not check_password_hash(empleado['Contrasena'], password):
+                    return jsonify({"error": "Invalid user or password"}), 401
                 
 
                 access_token = create_access_token(identity={"user": user, "role": empleado["Rol"]})
