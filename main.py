@@ -1,5 +1,4 @@
-import asyncio
-import json
+
 from flask import Flask, Response, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -11,8 +10,6 @@ from contextlib import asynccontextmanager
 app = Flask(__name__)
 jwt = JWTManager(app)
 CORS(app, resources={r"/": {"origins": ""}})
-# app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
-#ufa
 
 
 @asynccontextmanager
