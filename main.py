@@ -8,9 +8,10 @@ import aiomysql
 from contextlib import asynccontextmanager
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
 jwt = JWTManager(app)
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
-app.config['JWT_SECRET_KEY'] = 'IJDLZQVMpvbnBAuOsGBg'
+
 #ufa
 
 @app.after_request
@@ -51,9 +52,9 @@ async def login():
                 await cursor.execute(sql, (user,))
                 empleado = await cursor.fetchone()
                 print(empleado)
-                # if not empleado or not check_password_hash(empleado['Contrasena'], password):
-                    # return jsonify({"error": "Invalid user or password"}), 401
-                #RuntimeError: JWT_SECRET_KEY or flask SECRET_KEY must be set when using symmetric algorithm "HS256"
+                if not empleado or not check_password_hash(empleado['Contrasena'], password):
+                    return jsonify({"error": "Invalid user or password"}), 401
+                # RuntimeError: JWT_SECRET_KEY or flask SECRET_KEY must be set when using symmetric algorithm "HS256"
 
                 access_token = create_access_token(identity={"user": user, "role": empleado["Rol"]})
                 return jsonify(access_token=access_token), 200           
@@ -181,7 +182,7 @@ async def create_plato():
 @jwt_required()
 async def create_empleado():
     identity = get_jwt_identity()
-    if identity['role'] != 'admin':
+    if identity['role'] != 'Admin':
        return jsonify({"error": "Unauthorized"}), 403
     data = request.get_json()
     name = data.get('name')
