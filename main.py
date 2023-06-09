@@ -110,7 +110,7 @@ async def get_platos():
                 sql="SELECT ID_Plato, Nombre, Precio, Tiempo_Preparacion, Imagen_URL FROM Plato;"
                 await cursor.execute(sql)
                 platos=await cursor.fetchall()
-                res=[{"id_plato":platos["ID_Plato"],"nombre":platos["Nombre"],"precio":platos["Precio"],"tiempo_preparacion":platos["Tiempo_Preparacion"],"url_image":platos["Imagen_URL"]} for plato in platos]
+                res=[{"id_plato":plato["ID_Plato"],"nombre":plato["Nombre"],"precio":plato["Precio"],"tiempo_preparacion":plato["Tiempo_Preparacion"],"url_image":plato["Imagen_URL"]} for plato in platos]
                 return jsonify(res)
         except pymysql.Error as e:
             return jsonify({"error": "Database error: {}".format(e)}), 500
@@ -118,6 +118,47 @@ async def get_platos():
             connection.close()
 
 
+@app.route('/ingredientes',methods=['GET'])
+async def get_ingredientes():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql="SELECT ID_Ingrediente, Nombre, Stock, Unidad_Medida FROM Ingrediente;"
+                await cursor.execute(sql)
+                ingredientes=await cursor.fetchall()
+                res=[{"id_ingrediente":ingrediente["ID_Ingrediente"],"nombre":ingrediente["Nombre"],"stock":ingrediente["Stock"],"unidad_medida":ingrediente["Unidad_Medida"]} for ingrediente in ingredientes]
+                return jsonify(res)
+        except pymysql.Error as e:
+            return jsonify({"error": "Database error: {}".format(e)}), 500
+        finally:
+            connection.close()
+
+@app.route('/clientes', methods=['GET'])
+async def get_clientes():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT ID_Cliente, Nombre, Telefono, Direccion FROM Cliente;"
+                await cursor.execute(sql)
+                clientes = await cursor.fetchall()
+
+                resultados = []
+                for cliente in clientes:
+                    resultado = {
+                        "id_cliente": cliente['ID_Cliente'],
+                        "nombre": cliente['Nombre'],
+                        "telefono": cliente['Telefono'],
+                        "direccion": cliente['Direccion']
+                    }
+                    resultados.append(resultado)
+
+                return jsonify(resultados)
+
+        except pymysql.Error as e:
+            return jsonify({"error": "Database error: {}".format(e)}), 500
+
+        finally:
+            connection.close()
 
 # @app.route('/ingredientes', methods=['POST'])
 # async def crear_ingredientes():
@@ -225,47 +266,6 @@ async def create_proveedor():
     except Exception as e:
         return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
     
-@app.route('/ingredientes',methods=['GET'])
-async def get_ingredientes():
-    async with connect_to_database() as connection:
-        try:
-            async with connection.cursor() as cursor:
-                sql="SELECT ID_Ingrediente, Nombre, Stock, Unidad_Medida FROM Ingrediente;"
-                await cursor.execute(sql)
-                ingredientes=await cursor.fetchall()
-                res=[{"id_ingrediente":ingredientes["ID_Ingrediente"],"nombre":ingredientes["Nombre"],"stock":ingredientes["Stock"],"unidad_medida":ingredientes["Unidad_Medida"]} for ingrediente in ingredientes]
-                return jsonify(res)
-        except pymysql.Error as e:
-            return jsonify({"error": "Database error: {}".format(e)}), 500
-        finally:
-            connection.close()
-
-@app.route('/clientes', methods=['GET'])
-async def get_clientes():
-    async with connect_to_database() as connection:
-        try:
-            async with connection.cursor() as cursor:
-                sql = "SELECT ID_Cliente, Nombre, Telefono, Direccion FROM Cliente;"
-                await cursor.execute(sql)
-                clientes = await cursor.fetchall()
-
-                resultados = []
-                for cliente in clientes:
-                    resultado = {
-                        "id_cliente": cliente['ID_Cliente'],
-                        "nombre": cliente['Nombre'],
-                        "telefono": cliente['Telefono'],
-                        "direccion": cliente['Direccion']
-                    }
-                    resultados.append(resultado)
-
-                return jsonify(resultados)
-
-        except pymysql.Error as e:
-            return jsonify({"error": "Database error: {}".format(e)}), 500
-
-        finally:
-            connection.close()
 
 @app.route('/clientes', methods=['POST'])
 async def create_cliente():
