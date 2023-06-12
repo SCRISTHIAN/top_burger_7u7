@@ -187,13 +187,19 @@ async def get_menu():
 
 @app.route('/adquisicion', methods=['GET'])
 async def dynamic_programming():
-    inventario= [3,3,3,3]
-    demanda = [3, 4, 4, 3]
-    costo_pedido = [7.5, 7.5, 7.5, 7.5]
-    costo_adquisicion = [70, 65,60,60 ]
-    costo_almacenaje = [14,14,14,14]
-    resultado = bellman_algorithm(demanda, inventario, costo_pedido, costo_adquisicion, costo_almacenaje)
-    return jsonify(resultado)
+    inventario_mayonesa= [3,3,3,3]
+    demanda_mayonesa = [3, 4, 4, 3]
+    costo_pedido_mayonesa = [7.5, 7.5, 7.5, 7.5]
+    costo_adquisicion_mayonesa = [70, 65,60,60 ]
+    costo_almacenaje_mayonesa = [14,14,14,14]
+    resultado_mayonesa = bellman_algorithm(demanda_mayonesa, inventario_mayonesa,costo_pedido_mayonesa, costo_adquisicion_mayonesa,costo_almacenaje_mayonesa)
+    inventario_papa= [3,3,3,3]
+    demanda_papa = [12,13,15,15]
+    costo_pedido_papa = [15,15,15,15]
+    costo_adquisicion_papa = [40,40,45,50]
+    costo_almacenaje_papa = [27,27,27,27]
+    resultado_papa = bellman_algorithm(demanda_papa, inventario_papa,costo_pedido_papa, costo_adquisicion_papa, costo_almacenaje_papa)
+    return jsonify(resultado_mayonesa)
 
 # @app.route('/ingredientes', methods=['POST'])
 # async def crear_ingredientes():
