@@ -26,10 +26,16 @@ def after_request(response):
 @asynccontextmanager
 async def connect_to_database():
     connection = await aiomysql.connect(
-        host='containers-us-west-24.railway.app',
-        port=5828,
+        # host='containers-us-west-24.railway.app',
+        # port=5828,
+        # user='root',
+        # password='IJDLZQVMpvbnBAuOsGBg',
+        # db='railway',
+        # cursorclass=aiomysql.DictCursor
+        host='containers-us-west-174.railway.app',
+        port=6897,
         user='root',
-        password='IJDLZQVMpvbnBAuOsGBg',
+        password='zV5wnoVB2E935xu6LqKk',
         db='railway',
         cursorclass=aiomysql.DictCursor
     )
