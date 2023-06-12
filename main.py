@@ -1,4 +1,5 @@
 
+from dp_algorithm import bellman_algorithm
 from flask import Flask, Response, jsonify, request
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -176,6 +177,17 @@ async def get_menu():
             return jsonify({"error": "Database error: {}".format(e)}), 500
         finally:
             connection.close()
+
+
+@app.route('/adquisicion', methods=['GET'])
+async def dynamic_programming():
+    demanda = [...]
+    inventario = [...]
+    costo_pedido = [...]
+    costo_adquisicion = [...]
+    costo_almacenaje = [...]
+    resultado = bellman_algorithm(demanda, inventario, costo_pedido, costo_adquisicion, costo_almacenaje)
+    return jsonify(resultado)
 
 # @app.route('/ingredientes', methods=['POST'])
 # async def crear_ingredientes():
