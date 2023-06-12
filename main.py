@@ -199,7 +199,14 @@ async def dynamic_programming():
     costo_adquisicion_papa = [40,40,45,50]
     costo_almacenaje_papa = [27,27,27,27]
     resultado_papa = bellman_algorithm(demanda_papa, inventario_papa,costo_pedido_papa, costo_adquisicion_papa, costo_almacenaje_papa)
-    return jsonify(resultado_mayonesa)
+    resultados = {
+        "mayonesa": resultado_mayonesa.tolist(),
+        "papa": resultado_papa.tolist()
+    }
+    
+    return jsonify(resultados)
+
+
 
 # @app.route('/ingredientes', methods=['POST'])
 # async def crear_ingredientes():
