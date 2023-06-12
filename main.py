@@ -185,7 +185,15 @@ async def get_menu():
             connection.close()
 
 
-
+@app.route('/adquisicion', methods=['GET'])
+async def dynamic_programming():
+    inventario= [3,3,3,3]
+    demanda = [3, 4, 4, 3]
+    costo_pedido = [7.5, 7.5, 7.5, 7.5]
+    costo_adquisicion = [70, 65,60,60 ]
+    costo_almacenaje = [14,14,14,14]
+    resultado = bellman_algorithm(demanda, inventario, costo_pedido, costo_adquisicion, costo_almacenaje)
+    return jsonify(resultado)
 
 # @app.route('/ingredientes', methods=['POST'])
 # async def crear_ingredientes():
