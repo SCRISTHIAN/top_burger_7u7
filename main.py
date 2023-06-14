@@ -71,6 +71,45 @@ async def login():
             connection.close()
 
 
+
+
+# Usado para la VISTA DASHBOARD cuando piden los platos con stock bajo
+@app.route('/inventariolow', methods= ['GET'])
+async def inventariolow():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT * FROM PlatoViewPocasUnidades"
+                await cursor.execute(sql)
+                platos = await cursor.fetchall()
+
+                return jsonify(platos)
+        except pymysql.Error as e:
+            return jsonify({"error":"Database Error :{}".format(e)}),500
+        finally:
+            connection.close()
+
+
+
+# Usado para la vista menu del dia y platos cuando pide ordenar por disponibilidad
+@app.route('/menudeldia/orderedby',methods= ['GET'])
+async def menu_del_dia_orderedby_dispo():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT * FROM MENU_DEL_DIA_ORDERED"
+                await cursor.execute(sql)
+                platos = await cursor.fetchall()
+
+                return jsonify(platos)
+        except pymysql.Error as e:
+            return jsonify({"error":"Database Error :{}".format(e)}),500
+        finally:
+            connection.close()
+
+
+
+# Usado para obtener los empleados, SIN USO EN NINGUNA DE LAS VISTAS, SOLO PARA PROPOSITOS DE PRUEBA
 @app.route('/empleados', methods=['GET'])
 async def get_empleados():
     # connection=await connect_to_database()
@@ -89,6 +128,8 @@ async def get_empleados():
         finally:
             connection.close()
 
+
+# Usado en la VISTA PROVEEDORES EN LA SECCION DE PROVEEDORES
 @app.route('/proveedores', methods = ['GET'])
 async def get_proveedores():
     async with connect_to_database() as connection:
@@ -109,6 +150,7 @@ async def get_proveedores():
         finally:
             connection.close()
     
+
 @app.route('/platos',methods=['GET'])
 async def get_platos():
     async with connect_to_database() as connection:
