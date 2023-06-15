@@ -192,7 +192,7 @@ async def ingredientesoficial():
 
                 return jsonify(ingredientes)
         except pymysql.Error as e:
-            return jsonify("error":"Database error: {}".format(e)),500
+            return jsonify({"error":"Database error: {}".format(e)}),500
         finally:
             connection.close()
 
