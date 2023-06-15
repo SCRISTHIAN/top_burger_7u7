@@ -123,11 +123,10 @@ async def insert_pedido_cliente_plato(connection, pedido_id, plato_id, cantidad,
         await connection.commit()
 
 
-
 async def update_ingrediente_stock(connection, plato_id, cantidad):
     async with connection.cursor() as cursor:
         # Obtén la cantidad necesaria de ingredientes para el plato
-        sql = "SELECT SUM(Cantidad) as required_quantity FROM Plato_Ingrediente WHERE ID_Plato = %s"
+        sql = "SELECT Cantidad as required_quantity FROM Plato_Ingrediente WHERE ID_Plato = %s"
         await cursor.execute(sql, (plato_id,))
         required_quantity = (await cursor.fetchone())['required_quantity']
 
