@@ -123,15 +123,34 @@ async def insert_pedido_cliente_plato(connection, pedido_id, plato_id, cantidad,
         await connection.commit()
 
 
+
 async def update_ingrediente_stock(connection, plato_id, cantidad):
     async with connection.cursor() as cursor:
+        # Obtén la cantidad necesaria de ingredientes para el plato
+        sql = "SELECT SUM(Cantidad) as required_quantity FROM Plato_Ingrediente WHERE ID_Plato = %s"
+        await cursor.execute(sql, (plato_id,))
+        required_quantity = (await cursor.fetchone())['required_quantity']
+
+        # Verifica si hay suficiente stock antes de restarlo
         sql = """
-        UPDATE Ingrediente
-        SET Stock = Stock - %s * (SELECT SUM(Cantidad) FROM Plato_Ingrediente WHERE ID_Plato = %s)
+        SELECT Stock FROM Ingrediente
         WHERE ID_Ingrediente IN (SELECT ID_Ingrediente FROM Plato_Ingrediente WHERE ID_Plato = %s)
         """
-        await cursor.execute(sql, (cantidad, plato_id, plato_id))
-        await connection.commit()
+        await cursor.execute(sql, (plato_id,))
+        available_stock = (await cursor.fetchone())['Stock']
+
+        if required_quantity * cantidad <= available_stock:
+            # Si hay suficiente stock, actualiza el stock
+            sql = """
+            UPDATE Ingrediente
+            SET Stock = Stock - %s * required_quantity
+            WHERE ID_Ingrediente IN (SELECT ID_Ingrediente FROM Plato_Ingrediente WHERE ID_Plato = %s)
+            """
+            await cursor.execute(sql, (cantidad, plato_id))
+            await connection.commit()
+        else:
+            # Si no hay suficiente stock, lanza un error
+            raise Exception("Not enough stock for the requested quantity of the dish.")
 # DASHBOARD
 # Usado para la VISTA DASHBOARD cuando piden los platos con stock bajo
 @app.route('/inventariolow', methods= ['GET'])
