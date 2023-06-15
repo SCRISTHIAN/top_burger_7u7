@@ -94,7 +94,7 @@ async def ingresar_ingrediente():
 
                 # Crear una nueva entrada en la tabla Lote_Ingrediente
                 await insert_lote_ingrediente(connection, id_ingrediente, fecha_adquisicion, fecha_caducidad, cantidad)
-
+                await add_ingrediente_to_proveedor(connection, id_proveedor, id_ingrediente)
                 # Actualizar el stock del ingrediente
                 await update_ingrediente_stock_new(connection, id_ingrediente, cantidad)
 
@@ -136,6 +136,15 @@ async def update_ingrediente_stock_new(connection, id_ingrediente, cantidad):
         await cursor.execute(sql, (cantidad, id_ingrediente))
         await connection.commit()
 
+async def add_ingrediente_to_proveedor(connection, id_proveedor, id_ingrediente):
+    async with connection.cursor() as cursor:
+        sql = """
+        INSERT INTO Ingrediente_Proveedor (ID_Proveedor, ID_Ingrediente) 
+        VALUES (%s, %s)
+        ON DUPLICATE KEY UPDATE ID_Proveedor=VALUES(ID_Proveedor), ID_Ingrediente=VALUES(ID_Ingrediente)
+        """
+        await cursor.execute(sql, (id_proveedor, id_ingrediente))
+        await connection.commit()
 
 #CON GET
 # CREAR PEDIDO 
