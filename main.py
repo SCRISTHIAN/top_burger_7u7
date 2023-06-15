@@ -346,7 +346,7 @@ async def platos_description(plato_id):
         try:
             async with connection.cursor() as cursor:
                 sql = "CALL GetPlatoDetails(%s);"
-                await cursor.execute(sql,(id,))
+                await cursor.execute(sql,(plato_id,))
                 plato = await cursor.fetchone()
 
                 return jsonify(plato)
