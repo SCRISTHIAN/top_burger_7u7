@@ -73,6 +73,8 @@ async def login():
 
 
 
+
+
 # DASHBOARD
 # Usado para la VISTA DASHBOARD cuando piden los platos con stock bajo
 @app.route('/inventariolow', methods= ['GET'])
