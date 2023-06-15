@@ -357,6 +357,21 @@ async def platos_description(plato_id):
 
 
 
+@app.route('/ingredientes_description/<int:ingrediente_id>', methods = ['GET', 'POST'])
+async def platos_description(ingrediente_id):
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "CALL GetIngredientesDetails(%s);"
+                await cursor.execute(sql,(ingrediente_id,))
+                ingrediente = await cursor.fetchall()
+
+                return jsonify(ingrediente)
+        except pymysql.Error as e:
+            return jsonify({"error":"Database error: {}".format(e)}),500
+        finally:
+            connection.close()
+
 
 
 
