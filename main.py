@@ -347,7 +347,7 @@ async def platos_description(plato_id):
             async with connection.cursor() as cursor:
                 sql = "CALL GetPlatoDetails(%s);"
                 await cursor.execute(sql,(plato_id,))
-                plato = await cursor.fetchone()
+                plato = await cursor.fetchall()
 
                 return jsonify(plato)
         except pymysql.Error as e:
