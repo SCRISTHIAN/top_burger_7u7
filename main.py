@@ -72,9 +72,9 @@ async def login():
 
 
 
-
+#CON GET
 # CREAR INGREDIENTE
-@app.route('/create_pedido', methods=['POST'])
+@app.route('/create_pedido', methods=['POST', 'GET'])
 async def create_pedido():
     data = request.get_json()
     cliente_id = data['cliente']['id']
@@ -126,7 +126,7 @@ async def update_ingrediente_stock(connection, plato_id, cantidad):
     async with connection.cursor() as cursor:
         sql = """
         UPDATE Ingrediente
-        SET Stock = Stock - %s * (SELECT Cantidad FROM Plato_Ingrediente WHERE ID_Plato = %s)
+        SET Stock = Stock - %s * (SELECT SUM(Cantidad) FROM Plato_Ingrediente WHERE ID_Plato = %s)
         WHERE ID_Ingrediente IN (SELECT ID_Ingrediente FROM Plato_Ingrediente WHERE ID_Plato = %s)
         """
         await cursor.execute(sql, (cantidad, plato_id, plato_id))
