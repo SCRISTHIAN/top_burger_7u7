@@ -72,8 +72,73 @@ async def login():
 
 
 
+@app.route('/ingresar_ingrediente', methods=['POST'])
+async def ingresar_ingrediente():
+    data = request.get_json()
+    nombre_proveedor = data['nombre_proveedor']
+    ingredientes = data['ingredientes']
+
+    async with connect_to_database() as connection:
+        try:
+            # Buscar el ID del proveedor
+            id_proveedor = await get_proveedor_id(connection, nombre_proveedor)
+
+            for ingrediente in ingredientes:
+                nombre_ingrediente = ingrediente['nombre']
+                fecha_adquisicion = ingrediente['fecha_adquisicion']
+                fecha_caducidad = ingrediente['fecha_caducidad']
+                cantidad = ingrediente['cantidad']
+
+                # Buscar el ID del ingrediente
+                id_ingrediente = await get_ingrediente_id(connection, nombre_ingrediente)
+
+                # Crear una nueva entrada en la tabla Lote_Ingrediente
+                await insert_lote_ingrediente(connection, id_ingrediente, fecha_adquisicion, fecha_caducidad, cantidad)
+
+                # Actualizar el stock del ingrediente
+                await update_ingrediente_stock_new(connection, id_ingrediente, cantidad)
+
+            return jsonify({"success": True, "message": "Ingredientes ingresados con éxito."})
+
+        except Exception as e:
+            return jsonify({"error":"Database error: {}".format(e)}),500
+
+
+async def get_proveedor_id(connection, nombre_proveedor):
+    async with connection.cursor() as cursor:
+        sql = "SELECT ID_Proveedor FROM Proveedor WHERE Nombre = %s"
+        await cursor.execute(sql, (nombre_proveedor,))
+        result = await cursor.fetchone()
+        return result['ID_Proveedor']
+
+
+async def get_ingrediente_id(connection, nombre_ingrediente):
+    async with connection.cursor() as cursor:
+        sql = "SELECT ID_Ingrediente FROM Ingrediente WHERE Nombre = %s"
+        await cursor.execute(sql, (nombre_ingrediente,))
+        result = await cursor.fetchone()
+        return result['ID_Ingrediente']
+
+
+async def insert_lote_ingrediente(connection, id_ingrediente, fecha_adquisicion, fecha_caducidad, cantidad):
+    async with connection.cursor() as cursor:
+        sql = """
+        INSERT INTO Lote_Ingrediente (ID_Ingrediente, Fecha_Adquisicion, Fecha_Caducidad, Cantidad) 
+        VALUES (%s, %s, %s, %s)
+        """
+        await cursor.execute(sql, (id_ingrediente, fecha_adquisicion, fecha_caducidad, cantidad))
+        await connection.commit()
+
+
+async def update_ingrediente_stock_new(connection, id_ingrediente, cantidad):
+    async with connection.cursor() as cursor:
+        sql = "UPDATE Ingrediente SET Stock = Stock + %s WHERE ID_Ingrediente = %s"
+        await cursor.execute(sql, (cantidad, id_ingrediente))
+        await connection.commit()
+
+
 #CON GET
-# CREAR INGREDIENTE
+# CREAR PEDIDO 
 @app.route('/create_pedido', methods=['POST', 'GET'])
 async def create_pedido():
     data = request.get_json()
