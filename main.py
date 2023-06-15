@@ -284,26 +284,33 @@ async def get_empleados():
 
 
 # Usado en la VISTA PROVEEDORES EN LA SECCION DE PROVEEDORES
+
+
 @app.route('/proveedores', methods = ['GET'])
 async def get_proveedores():
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
-                # Consulta los nombres de los clientes
-                sql = "SELECT ID_Proveedor, Nombre, Telefono, Direccion FROM Proveedor;"
+                # Consulta los nombres de los proveedores y los ingredientes que proporcionan
+                sql = """
+                SELECT Proveedor.ID_Proveedor, Proveedor.Nombre, Proveedor.Telefono, Proveedor.Direccion, GROUP_CONCAT(Ingrediente.Nombre) as Ingredientes
+                FROM Proveedor
+                LEFT JOIN Pedido_Proveedor_Ingrediente ON Proveedor.ID_Proveedor = Pedido_Proveedor_Ingrediente.ID_Proveedor
+                LEFT JOIN Ingrediente ON Pedido_Proveedor_Ingrediente.ID_Ingrediente = Ingrediente.ID_Ingrediente
+                GROUP BY Proveedor.ID_Proveedor;
+                """
                 await cursor.execute(sql)
                 
                 # Obtiene los resultados
                 proveedores = await cursor.fetchall()
                 
-                resultados = [{"id_proveedor":proveedor['ID_Proveedor'],"nombre": proveedor['Nombre'], "telefono": proveedor['Telefono'], "direccion": proveedor['Direccion']} for proveedor in proveedores]
+                resultados = [{"id_proveedor":proveedor['ID_Proveedor'],"nombre": proveedor['Nombre'], "telefono": proveedor['Telefono'], "direccion": proveedor['Direccion'], "ingredientes": proveedor['Ingredientes']} for proveedor in proveedores]
                 return jsonify(resultados)
         
         except pymysql.Error as e:
             return jsonify({"error": "Database error: {}".format(e)}), 500
         finally:
             connection.close()
-
 
 # Quiero ver cuanto consume cada plato.
 @app.route('/platos_ingredientes', methods = ['GET'])
