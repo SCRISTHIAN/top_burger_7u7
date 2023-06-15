@@ -239,6 +239,26 @@ async def get_proveedores():
             return jsonify({"error": "Database error: {}".format(e)}), 500
         finally:
             connection.close()
+
+
+# Quiero ver cuanto consume cada plato.
+@app.route('/platos_ingredientes', methods = ['GET'])
+async def get_platos_ingredientes():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                # Consulta los nombres de los clientes
+                sql = "SELECT ID_Plato, ID_Ingrediente, Cantidad FROM Plato_Ingrediente;"
+                await cursor.execute(sql)
+                
+                platos_ingredientes = await cursor.fetchall()
+                
+                return jsonify(platos_ingredientes)
+        
+        except pymysql.Error as e:
+            return jsonify({"error": "Database error: {}".format(e)}), 500
+        finally:
+            connection.close()
     
 # VISTA DESCRIPCION DEL PLATO
 @app.route('/platosdescription', methods = ['GET', 'POST'])
