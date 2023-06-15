@@ -163,7 +163,7 @@ async def get_proveedores():
             connection.close()
     
 # VISTA DESCRIPCION DEL PLATO
-@app.route('/platosdescription', methods = ['GET'])
+@app.route('/platosdescription', methods = ['GET', 'POST'])
 async def platos_description():
     data = request.get_json()
     id = data.get('id_plato')
