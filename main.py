@@ -285,7 +285,6 @@ async def get_empleados():
 
 # Usado en la VISTA PROVEEDORES EN LA SECCION DE PROVEEDORES
 
-
 @app.route('/proveedores', methods = ['GET'])
 async def get_proveedores():
     async with connect_to_database() as connection:
@@ -295,8 +294,8 @@ async def get_proveedores():
                 sql = """
                 SELECT Proveedor.ID_Proveedor, Proveedor.Nombre, Proveedor.Telefono, Proveedor.Direccion, GROUP_CONCAT(Ingrediente.Nombre) as Ingredientes
                 FROM Proveedor
-                LEFT JOIN Pedido_Proveedor_Ingrediente ON Proveedor.ID_Proveedor = Pedido_Proveedor_Ingrediente.ID_Proveedor
-                LEFT JOIN Ingrediente ON Pedido_Proveedor_Ingrediente.ID_Ingrediente = Ingrediente.ID_Ingrediente
+                LEFT JOIN Ingrediente_Proveedor ON Proveedor.ID_Proveedor = Ingrediente_Proveedor.ID_Proveedor
+                LEFT JOIN Ingrediente ON Ingrediente_Proveedor.ID_Ingrediente = Ingrediente.ID_Ingrediente
                 GROUP BY Proveedor.ID_Proveedor;
                 """
                 await cursor.execute(sql)
