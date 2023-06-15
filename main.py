@@ -180,21 +180,7 @@ async def platos_description():
         finally:
             connection.close()
 
-#VISTA INGREDIENTES
-@app.route('ingredientesoficial', methods = ['GET'])
-async def ingredientesoficial():
-    async with connect_to_database() as connection:
-        try:
-            async with connection.cursor() as cursor:
-                sql = "SELECT * FROM IngredientesView"
-                await cursor.execute(sql)
-                ingredientes = await cursor.fetchall()
 
-                return jsonify(ingredientes)
-        except pymysql.Error as e:
-            return jsonify({"error":"Database error: {}".format(e)}),500
-        finally:
-            connection.close()
 
 
 
