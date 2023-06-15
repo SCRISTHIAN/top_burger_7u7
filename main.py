@@ -73,6 +73,63 @@ async def login():
 
 
 
+# CREAR INGREDIENTE
+@app.route('/create_pedido', methods=['POST'])
+async def create_pedido():
+    data = request.get_json()
+    cliente_id = data['cliente']['id']
+    empleado_id = data['empleado']['id']
+    platos = data['platos']
+
+    async with connect_to_database() as connection:
+        try:
+            # Crear una nueva entrada en la tabla Pedido_Cliente
+            pedido_id = await insert_pedido_cliente(connection, cliente_id, empleado_id)
+
+            for plato in platos:
+                plato_id = await get_plato_id(connection, plato['nombre'])
+                cantidad = plato['cantidad']
+
+                # Crear nuevas entradas en la tabla Pedido_Cliente_Plato
+                await insert_pedido_cliente_plato(connection, pedido_id, plato_id, cantidad, plato['precio_vendido'])
+
+                # Actualizar el stock de los ingredientes
+                await update_ingrediente_stock(connection, plato_id, cantidad)
+
+            return jsonify({"success": True, "message": "Pedido creado con éxito."})
+
+        except Exception as e:
+            return jsonify({"error":"Database error: {}".format(e)}),500
+
+async def insert_pedido_cliente(connection, cliente_id):
+    async with connection.cursor() as cursor:
+        sql = "INSERT INTO Pedido_Cliente (Fecha, Estado, ID_Cliente, ID_Empleado) VALUES (CURDATE(), 'pendiente', %s, 1)"
+        await cursor.execute(sql, (cliente_id,))
+        await connection.commit()
+        return cursor.lastrowid
+
+async def get_plato_id(connection, plato_nombre):
+    async with connection.cursor() as cursor:
+        sql = "SELECT ID_Plato FROM Plato WHERE Nombre = %s"
+        await cursor.execute(sql, (plato_nombre,))
+        result = await cursor.fetchone()
+        return result['ID_Plato']
+
+async def insert_pedido_cliente_plato(connection, pedido_id, plato_id, cantidad, precio_vendido):
+    async with connection.cursor() as cursor:
+        sql = "INSERT INTO Pedido_Cliente_Plato (ID_Pedido_Cliente, ID_Plato, Cantidad, Precio_Vendido) VALUES (%s, %s, %s, %s)"
+        await cursor.execute(sql, (pedido_id, plato_id, cantidad, precio_vendido))
+        await connection.commit()
+
+async def update_ingrediente_stock(connection, plato_id, cantidad):
+    async with connection.cursor() as cursor:
+        sql = """
+        UPDATE Ingrediente
+        SET Stock = Stock - %s * (SELECT Cantidad FROM Plato_Ingrediente WHERE ID_Plato = %s)
+        WHERE ID_Ingrediente IN (SELECT ID_Ingrediente FROM Plato_Ingrediente WHERE ID_Plato = %s)
+        """
+        await cursor.execute(sql, (cantidad, plato_id, plato_id))
+        await connection.commit()
 
 
 # DASHBOARD
