@@ -95,7 +95,7 @@ async def cantidad_proveedores():
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
-                sql = "SELECT TotalProveedores() as Total;"
+                sql = "SELECT TotalProveedores();"
                 await cursor.execute(sql)
                 cantidadproveedores = await cursor.fetchone()
 
