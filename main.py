@@ -101,10 +101,10 @@ async def create_pedido():
         except Exception as e:
             return jsonify({"error":"Database error: {}".format(e)}),500
 
-async def insert_pedido_cliente(connection, cliente_id):
+async def insert_pedido_cliente(connection, cliente_id, empleado_id):
     async with connection.cursor() as cursor:
-        sql = "INSERT INTO Pedido_Cliente (Fecha, Estado, ID_Cliente, ID_Empleado) VALUES (CURDATE(), 'pendiente', %s, 1)"
-        await cursor.execute(sql, (cliente_id,))
+        sql = "INSERT INTO Pedido_Cliente (Fecha, Estado, ID_Cliente, ID_Empleado) VALUES (CURDATE(), 'pendiente', %s, %s)"
+        await cursor.execute(sql, (cliente_id, empleado_id))
         await connection.commit()
         return cursor.lastrowid
 
