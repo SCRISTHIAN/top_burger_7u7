@@ -340,10 +340,8 @@ async def get_platos_ingredientes():
             connection.close()
     
 # VISTA DESCRIPCION DEL PLATO
-@app.route('/platosdescription', methods = ['GET', 'POST'])
-async def platos_description():
-    data = request.get_json()
-    id = data.get('id_plato')
+@app.route('/platosdescription/<int:plato_id>', methods = ['GET', 'POST'])
+async def platos_description(plato_id):
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
