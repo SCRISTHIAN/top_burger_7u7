@@ -122,6 +122,7 @@ async def insert_pedido_cliente_plato(connection, pedido_id, plato_id, cantidad,
         await cursor.execute(sql, (pedido_id, plato_id, cantidad, precio_vendido))
         await connection.commit()
 
+
 async def update_ingrediente_stock(connection, plato_id, cantidad):
     async with connection.cursor() as cursor:
         sql = """
