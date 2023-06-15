@@ -358,7 +358,7 @@ async def platos_description(plato_id):
 
 
 @app.route('/ingredientesdescription/<int:ingrediente_id>', methods = ['GET', 'POST'])
-async def platos_description(ingrediente_id):
+async def ingredientes_description(ingrediente_id):
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
