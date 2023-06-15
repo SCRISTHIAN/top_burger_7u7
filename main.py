@@ -73,6 +73,7 @@ async def login():
 
 
 
+# DASHBOARD
 # Usado para la VISTA DASHBOARD cuando piden los platos con stock bajo
 @app.route('/inventariolow', methods= ['GET'])
 async def inventariolow():
@@ -89,9 +90,20 @@ async def inventariolow():
         finally:
             connection.close()
 
+@app.route ('/cantidadproveedores', methods= ['GET'])
+async def cantidad_proveedores():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT TotalProveedores();"
+                await cursor.execute(sql)
+                cantidadproveedores = await cursor.fetchone()
 
+                return jsonify(cantidadproveedores)
+        except pymysql.Error as e:
+            return jsonify({"error":"Database Error :{}".format(e)}),500
 
-# Usado para la vista menu del dia y platos cuando pide ordenar por disponibilidad
+# Usado para la VISTA MENU DEL DIA Y PLATOS cuando pide ordenar por disponibilidad
 @app.route('/menudeldia/orderedby',methods= ['GET'])
 async def menu_del_dia_orderedby_dispo():
     async with connect_to_database() as connection:
@@ -150,6 +162,28 @@ async def get_proveedores():
         finally:
             connection.close()
     
+# VISTA DESCRIPCION DEL PLATO
+@app.route('/platosdescription', methods = ['GET'])
+async def platos_description():
+    data = request.get_json()
+    id = data.get('id_plato')
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "CALL GetPlatoDetails(%s);"
+                await cursor.execute(sql,(id,))
+                plato = await cursor.fetchone()
+
+                return jsonify(plato)
+        except pymysql.Error as e:
+            return jsonify({"error":"Database error: {}".format(e)}),500
+        finally:
+            connection.close()
+
+
+
+
+
 
 @app.route('/platos',methods=['GET'])
 async def get_platos():
