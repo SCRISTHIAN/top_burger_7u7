@@ -101,6 +101,7 @@ async def create_pedido():
         except Exception as e:
             return jsonify({"error":"Database error: {}".format(e)}),500
 
+
 async def insert_pedido_cliente(connection, cliente_id, empleado_id):
     async with connection.cursor() as cursor:
         sql = "INSERT INTO Pedido_Cliente (Fecha, Estado, ID_Cliente, ID_Empleado) VALUES (CURDATE(), 'pendiente', %s, %s)"
@@ -130,8 +131,6 @@ async def update_ingrediente_stock(connection, plato_id, cantidad):
         """
         await cursor.execute(sql, (cantidad, plato_id, plato_id))
         await connection.commit()
-
-
 # DASHBOARD
 # Usado para la VISTA DASHBOARD cuando piden los platos con stock bajo
 @app.route('/inventariolow', methods= ['GET'])
