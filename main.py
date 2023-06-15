@@ -346,11 +346,11 @@ async def create_plato():
         return jsonify({"error": "Error en la solicitud POST: {}".format(str(e))}), 500
 
 @app.route('/empleados', methods=['POST'])
-@jwt_required()
+# @jwt_required()
 async def create_empleado():
-    identity = get_jwt_identity()
-    if identity['role'] != 'Admin':
-       return jsonify({"error": "Unauthorized"}), 403
+    # identity = get_jwt_identity()
+    # if identity['role'] != 'Admin':
+       # return jsonify({"error": "Unauthorized"}), 403
     data = request.get_json()
     name = data.get('name')
     user = data.get('user')
