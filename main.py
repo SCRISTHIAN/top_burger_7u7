@@ -433,12 +433,13 @@ async def get_clientes():
             connection.close()
 
 
+# Modificado
 @app.route('/menudeldia', methods=['GET'])
 async def get_menu():
     async with connect_to_database() as connection:
         try: 
             async with connection.cursor() as cursor:
-                sql = "SELECT * FROM PlatoView"
+                sql = "SELECT * FROM MENU_DEL_DIA_ORDERED_SC"
                 await cursor.execute(sql)
             
                 platos = await cursor.fetchall()
