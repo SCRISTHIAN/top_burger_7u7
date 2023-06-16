@@ -497,7 +497,7 @@ async def dynamic_programming():
     return jsonify(resultados)
 
 
-@app.route('/adquisiciontable', methods=['GET'])
+@app.route('/adquisiciontablepapa', methods=['GET'])
 async def dynamic_programming2():
     inventario_mayonesa= [3,3,3,3]
     demanda_mayonesa = [3, 4, 4, 3]
@@ -517,7 +517,24 @@ async def dynamic_programming2():
             "semana2": resultado_papa[1],
             "semana3": resultado_papa[2],
             "semana4": resultado_papa[3]
-            }
+    }
+    
+    return jsonify(resultados)
+
+@app.route('/adquisiciontablemayonesa', methods=['GET'])
+async def dynamic_programming2():
+    inventario_mayonesa= [3,3,3,3]
+    demanda_mayonesa = [3, 4, 4, 3]
+    costo_pedido_mayonesa = [7.5, 7.5, 7.5, 7.5]
+    costo_adquisicion_mayonesa = [70, 65,60,60 ]
+    costo_almacenaje_mayonesa = [14,14,14,14]
+    resultado_mayonesa = bellman_algorithm(demanda_mayonesa, inventario_mayonesa,costo_pedido_mayonesa, costo_adquisicion_mayonesa,costo_almacenaje_mayonesa)
+    resultados = {
+            "nombre": resultado_mayonesa[0],
+            "semana2": resultado_mayonesa[1],
+            "semana3": resultado_mayonesa[2],
+            "semana4": resultado_mayonesa[3]
+    }
     
     return jsonify(resultados)
 
