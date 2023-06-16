@@ -497,6 +497,31 @@ async def dynamic_programming():
     return jsonify(resultados)
 
 
+@app.route('/adquisiciontable', methods=['GET'])
+async def dynamic_programming2():
+    inventario_mayonesa= [3,3,3,3]
+    demanda_mayonesa = [3, 4, 4, 3]
+    costo_pedido_mayonesa = [7.5, 7.5, 7.5, 7.5]
+    costo_adquisicion_mayonesa = [70, 65,60,60 ]
+    costo_almacenaje_mayonesa = [14,14,14,14]
+    resultado_mayonesa = bellman_algorithm(demanda_mayonesa, inventario_mayonesa,costo_pedido_mayonesa, costo_adquisicion_mayonesa,costo_almacenaje_mayonesa)
+    inventario_papa= [3,3,3,3]
+    demanda_papa = [12,13,15,15]
+    costo_pedido_papa = [15,15,15,15]
+    costo_adquisicion_papa = [40,40,45,50]
+    costo_almacenaje_papa = [27,27,27,27]
+    resultado_papa = bellman_algorithm(demanda_papa, inventario_papa,costo_pedido_papa, costo_adquisicion_papa, costo_almacenaje_papa)
+    resultados = {
+            "nombre": "papa",
+            "semana1": resultado_papa[0],
+            "semana2": resultado_papa[1],
+            "semana3": resultado_papa[2],
+            "semana4": resultado_papa[3]
+            }
+    
+    return jsonify(resultados)
+
+
 @app.route('/ordenes', methods=['GET'])
 async def ordenes():
     async with connect_to_database() as connection:
