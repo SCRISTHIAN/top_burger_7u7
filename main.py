@@ -365,8 +365,6 @@ async def ingredientes_description(ingrediente_id):
                 sql = "CALL GetIngredienteDetails(%s);"
                 await cursor.execute(sql,(ingrediente_id,))
                 ingrediente = await cursor.fetchall()
-
-
                 return jsonify(ingrediente)
         except pymysql.Error as e:
             return jsonify({"error":"Database error: {}".format(e)}),500
@@ -474,6 +472,54 @@ async def dynamic_programming():
     return jsonify(resultados)
 
 
+@app.route('/ordenes', methods=['GET'])
+async def ordenes():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "CALL GetOrdenes();"
+                await cursor.execute(sql)
+                ordenes = await cursor.fetchall()
+
+                return jsonify(ordenes)
+        except pymysql.Error as e:
+            return jsonify({"error":"Database error: {}".format(e)}),500
+        finally:
+            connection.close()
+
+@app.route('/platosmasvendidos', methods=['GET'])
+async def get_platos_mas_vendidos():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT * FROM PlatosMasVendidos;"
+                await cursor.execute(sql)
+                platos_mas_vendidos = await cursor.fetchall()
+
+                return jsonify(platos_mas_vendidos)
+
+        except pymysql.Error as e:
+            return jsonify({"error":"Database error: {}".format(e)}),500
+
+        finally:
+            connection.close()
+
+@app.route('/ingredientesescasos', methods=['GET'])
+async def get_ingredientes_escasos():
+    async with connect_to_database() as connection:
+        try:
+            async with connection.cursor() as cursor:
+                sql = "SELECT * FROM IngredientesEscasos;"
+                await cursor.execute(sql)
+                ingredientes_escasos = await cursor.fetchall()
+
+                return jsonify(ingredientes_escasos)
+
+        except pymysql.Error as e:
+            return jsonify({"error":"Database error: {}".format(e)}),500
+
+        finally:
+            connection.close()
 
 # @app.route('/ingredientes', methods=['POST'])
 # async def crear_ingredientes():
