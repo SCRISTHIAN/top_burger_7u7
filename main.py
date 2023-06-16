@@ -524,7 +524,8 @@ async def dynamic_programming3():
     costo_almacenaje_mayonesa = [14,14,14,14]
     resultado_mayonesa = bellman_algorithm(demanda_mayonesa, inventario_mayonesa,costo_pedido_mayonesa, costo_adquisicion_mayonesa,costo_almacenaje_mayonesa)
     resultados = {
-            "nombre": resultado_mayonesa[0],
+            "nombre":"mayonesa",
+            "semana1": resultado_mayonesa[0],
             "semana2": resultado_mayonesa[1],
             "semana3": resultado_mayonesa[2],
             "semana4": resultado_mayonesa[3]
