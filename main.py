@@ -224,6 +224,31 @@ async def update_ingrediente_stock(connection, plato_id, cantidad):
         else:
             # Si no hay suficiente stock, lanza un error
             raise Exception("Not enough stock for the requested quantity of the dish.")
+
+@app.route('/get_pedidos_proveedor', methods=['GET'])
+async def get_pedidos_proveedor():
+    async with connect_to_database() as connection:
+        try:
+            # Obtener información de los pedidos del proveedor
+            pedidos = await get_pedido_proveedor_info(connection)
+            return jsonify({"success": True, "data": pedidos})
+
+        except Exception as e:
+            return jsonify({"error": "Database error: {}".format(e)}), 500
+
+async def get_pedido_proveedor_info(connection):
+    async with connection.cursor() as cursor:
+        sql = """
+        SELECT P.Nombre AS Proveedor, I.Nombre AS Ingrediente, PI.Cantidad, PP.Estado, PP.Confirmado
+        FROM Pedido_Proveedor AS PP
+        JOIN Proveedor AS P ON PP.ID_Proveedor = P.ID_Proveedor
+        JOIN Pedido_Proveedor_Ingrediente AS PI ON PP.ID_Pedido_Proveedor = PI.ID_Pedido_Proveedor
+        JOIN Ingrediente AS I ON PI.ID_Ingrediente = I.ID_Ingrediente
+        """
+        await cursor.execute(sql)
+        result = await cursor.fetchall()
+        return result
+
 # DASHBOARD
 # Usado para la VISTA DASHBOARD cuando piden los platos con stock bajo
 @app.route('/inventariolow', methods= ['GET'])
