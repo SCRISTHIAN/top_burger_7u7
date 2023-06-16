@@ -357,7 +357,7 @@ async def platos_description(plato_id):
 
 
 
-@app.route('/ingredientesdescription/<int:ingrediente_id>', methods = ['GET','POST'])
+@app.route('/ingredientes/<int:ingrediente_id>', methods = ['GET','POST'])
 async def ingredientes_description(ingrediente_id):
     async with connect_to_database() as connection:
         try:
@@ -395,11 +395,10 @@ async def get_ingredientes():
     async with connect_to_database() as connection:
         try:
             async with connection.cursor() as cursor:
-                sql="SELECT ID_Ingrediente, Nombre, Stock, Unidad_Medida FROM Ingrediente;"
+                sql="SELECT * FROM IngredientesView;"
                 await cursor.execute(sql)
                 ingredientes=await cursor.fetchall()
-                res=[{"id_ingrediente":ingrediente["ID_Ingrediente"],"nombre":ingrediente["Nombre"],"stock":ingrediente["Stock"],"unidad_medida":ingrediente["Unidad_Medida"]} for ingrediente in ingredientes]
-                return jsonify(res)
+                return jsonify(ingredientes)
         except pymysql.Error as e:
             return jsonify({"error": "Database error: {}".format(e)}), 500
         finally:
